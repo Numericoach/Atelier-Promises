@@ -1,0 +1,22 @@
+<script>
+    window.onload = () => {        
+        document.getElementById('startPromises').addEventListener('click', parallelRun);
+    };
+    /**
+     * Starts parrael run of promises to create a spreadsheet on each iteration on the server's side.
+     * @param void
+     * @returns void
+     */
+    async function parallelRun() {       
+        const folderId = '1-koJAVd6RR2TgHMLLrZHrsi4UpCwLc6B';
+        const promises = [...Array(10)].map((_, i) =>    
+            new Promise(resolve => google.script.run.withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet ${i}`))
+        );
+        try {
+            await Promise.all(promises).catch(err => console.log(err));            
+            // await Promise.allSettled(promises);
+        } catch (error) {
+            console.log(error.toString());
+        }        
+    }
+</script>
