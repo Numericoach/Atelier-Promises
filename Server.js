@@ -8,6 +8,9 @@ function createSpreadsheet( folderId, name ) {
     DriveApp.getFileById(newSs.getId()).moveTo(DriveApp.getFolderById(folderId));
     newSs.insertSheet().getRange(1, 1).setValue('Hello World !');    
 }
+function getHelloWorld() {
+    return 'Hello World !';
+}
 /**
  * @description Display the sidebar in Google Sheets UI 
  */

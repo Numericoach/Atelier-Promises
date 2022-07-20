@@ -2,6 +2,8 @@
     window.onload = () => {        
         document.getElementById('startPromises').addEventListener('click', parallelRun);
     };
+     
+
     /**
      * Starts parrael run of promises to create a spreadsheet on each iteration on the server's side.
      * @param void
@@ -9,14 +11,55 @@
      */
     async function parallelRun() {       
         const folderId = '1-koJAVd6RR2TgHMLLrZHrsi4UpCwLc6B';
+        let results;
+        /**
+         * Example 1
+         * Array of 10 promises created with Array.map of same server function with different parameters
+         *  
+         */
+        /**
+         * 
         const promises = [...Array(10)].map((_, i) =>    
             new Promise(resolve => google.script.run.withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet ${i}`))
-        );
+        );       
+        /**         
+         * We can do something else here while the result is not mandatory to continue the script          
+         */
+
+
+
+         /**
+         * Example 2
+         * Array of promises created "manually" with different server functions
+         *  
+         */
+        const promisesArray = [];
+        promisesArray.push(new Promise(resolve => google.script.run.withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet TEST`)));
+        /**         
+         * We can do something else here while the result is not mandatory to continue the script          
+         */
+        promisesArray.push(new Promise(resolve => google.script.run.withSuccessHandler(resolve).getHelloWorld()));
+        /**
+         * We can do something else here while the result is not mandatory to continue the script 
+         */
+        
+         
+
+        /**
+         * The results handler is the same for both examples
+         */
         try {
-            await Promise.all(promises).catch(err => console.log(err));            
-            // await Promise.allSettled(promises);
+            // example 1
+            // results = await Promise.all(promises); => all() = we wait for all promises to be resolved it fails if one of them throws an error (server side)
+
+            // example 2
+            results = await Promise.allSettled(promisesArray) // => allSetteld() = we wait for all promises to be resolved even if one or more fails
+            //with await whe tell the script to wait for all promises to be resolved before continuing
         } catch (error) {
             console.log(error.toString());
-        }        
+        }
+        results.forEach(res => {
+            console.log(JSON.stringify(res));
+        });        
     }
 </script>
