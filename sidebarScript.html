@@ -20,7 +20,7 @@
         /**
          * 
         const promises = [...Array(10)].map((_, i) =>    
-            new Promise(resolve => google.script.run.withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet ${i}`))
+            new Promise((resolve, reject) => google.script.run.withFailureHandler(reject).withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet ${i}`))
         );       
         /**         
          * We can do something else here while the result is not mandatory to continue the script          
@@ -34,11 +34,11 @@
          *  
          */
         const promisesArray = [];
-        promisesArray.push(new Promise(resolve => google.script.run.withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet TEST`)));
+        promisesArray.push(new Promise((resolve, reject) => google.script.run.withFailureHandler(reject).withSuccessHandler(resolve).createSpreadsheet(folderId, `Spreadsheet TEST`)));
         /**         
          * We can do something else here while the result is not mandatory to continue the script          
          */
-        promisesArray.push(new Promise(resolve => google.script.run.withSuccessHandler(resolve).getHelloWorld()));
+        promisesArray.push(new Promise((resolve, reject) => google.script.run.withFailureHandler(reject).withSuccessHandler(resolve).getHelloWorld()));
         /**
          * We can do something else here while the result is not mandatory to continue the script 
          */
@@ -48,18 +48,22 @@
         /**
          * The results handler is the same for both examples
          */
-        try {
-            // example 1
-            // results = await Promise.all(promises); => all() = we wait for all promises to be resolved it fails if one of them throws an error (server side)
+        // example 1
+        // results = await Promise.all(promises); => all() = we wait for all promises to be resolved it fails if one of them throws an error (server side)
 
-            // example 2
-            results = await Promise.allSettled(promisesArray) // => allSetteld() = we wait for all promises to be resolved even if one or more fails
-            //with await whe tell the script to wait for all promises to be resolved before continuing
-        } catch (error) {
-            console.log(error.toString());
-        }
+        // example 2
+        results = await Promise.allSettled(promisesArray) // => allSetteld() = we wait for all promises to be resolved even if one or more fails
+        //with await whe tell the script to wait for all promises to be resolved before continuing                
         results.forEach(res => {
             console.log(JSON.stringify(res));
-        });        
+            if ( res.reason ) {
+                // property reason exists only if the promise was rejected = Error
+            }
+        });
+        
+        
+        /**
+         * NB : Try / Catch is only useful when dealing with async await keywords not with Promise Objects as in this example 
+         */
     }
 </script>
