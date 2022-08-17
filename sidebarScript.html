@@ -2,7 +2,20 @@
     window.onload = () => {        
         document.getElementById('startPromises').addEventListener('click', parallelRun);
     };
-     
+    
+    /**
+     * 
+     * Starts a single server call and awaits its result before next line
+     * 
+     */
+    const awaitServerCall = () => {
+        //fonction anonyme qui se déclenche directement
+        (() => {
+            //Do something
+            const result = await new Promise( (resolve, reject) => google.script.run.withFailureHandler(reject).withSuccessHandler(resolve).serverCall() ); //script waits for promise result before going to next line
+            //Do something with result
+        })();
+    }
 
     /**
      * Starts parrael run of promises to create a spreadsheet on each iteration on the server's side.
